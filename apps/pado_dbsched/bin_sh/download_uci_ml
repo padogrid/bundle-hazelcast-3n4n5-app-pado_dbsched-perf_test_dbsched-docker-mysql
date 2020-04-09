@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+. $SCRIPT_DIR/.addonenv.sh
+
+EXECUTABLE="`basename $0`"
+
+DATA_DIR=$PADO_HOME/data
+UCI_ML_DIR=$DATA_DIR/uci-ml
+
+#
+# @required URL
+# @required DATASET_PATH
+# @required FILES
+#
+function download_datasets
+{
+   echo "Downloading: $UCI_ML_DIR/$DATASET_PATH"
+   if [ ! -d $UCI_ML_DIR/$DATASET_PATH ]; then
+      mkdir -p $UCI_ML_DIR/$DATASET_PATH
+   fi
+
+   for i in $FILES; do
+      curl -sS $URL/$i -o $UCI_ML_DIR/$DATASET_PATH/$i
+   done
+}
+
+# Download Forest Fires Dataset
+URL="https://archive.ics.uci.edu/ml/machine-learning-databases/forest-fires"
+DATASET_PATH="forestfires"
+FILES="forestfires.csv forestfires.names"
+download_datasets
+
+# Download Incident Event Log Dataset
+URL="https://archive.ics.uci.edu/ml/machine-learning-databases/00498"
+DATASET_PATH="incident-event-log"
+FILES="incident_event_log.zip"
+download_datasets
+
+# Download Poker Hand Datasets
+URL="https://archive.ics.uci.edu/ml/machine-learning-databases/poker"
+DATASET_PATH="poker-hand"
+FILES="poker-hand-testing.data poker-hand-training-true.data poker-hand.names"
+download_datasets
+
+# Download Thyroid Disease Datasets
+URL="https://archive.ics.uci.edu/ml/machine-learning-databases/thyroid-disease"
+DATASET_PATH="thyroid-disease"
+FILES="HELLO Index allbp.data allbp.names allbp.test allhyper.data allhyper.names allhyper.test allhypo.data allhypo.names allhypo.test allrep.data allrep.names allrep.test ann-Readme ann-test.data ann-thyroid.names ann-train.data dis.data dis.names dis.test hypothyroid.data hypothyroid.names new-thyroid.data new-thyroid.names sick-euthyroid.data sick-euthyroid.names sick.data sick.names sick.test thyroid.theory thyroid0387.data thyroid0387.names"
+download_datasets
+
+# Download Thyroid Disease Costs Datasets
+URL="https://archive.ics.uci.edu/ml/machine-learning-databases/thyroid-disease/costs"
+DATASET_PATH="thyroid-disease/costs"
+FILES="Index ann-thyroid.README ann-thyroid.cost ann-thyroid.delay ann-thyroid.expense ann-thyroid.group"
+download_datasets
+
+echo "Download complete."
+echo ""

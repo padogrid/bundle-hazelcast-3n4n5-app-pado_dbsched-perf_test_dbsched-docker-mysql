@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+. $SCRIPT_DIR/.addonenv.sh
+
+EXECUTABLE="`basename $0`"
+REPO_NAME=hazelcast-desktop
+
+if [ "$HELP" == "true" ]; then
+cat <<EOF
+
+NAME
+   $EXECUTABLE - Build Pado
+
+SYNOPSIS
+   $EXECUTABLE [-clean] [-?]
+
+   Builds pado which provides Hazelcast Portable class generator and CSV file import
+   services. Upon successful build, it installs Pado in this app directory:
+ 
+   $APP_DIR/pado-<version>
+
+   -clean Cleans up the build files after the build completes.
+
+DEFAULT
+   $EXECUTABLE
+
+EOF
+   exit
+fi
+
+if [ ! -d "$APP_DIR/build" ]; then
+   mkdir -p $APP_DIR/build
+fi
+pushd $APP_DIR/build > /dev/null
+git clone https://github.com/netcrest/pado.git
+popd > /dev/null
+pushd $APP_DIR/build/pado > /dev/null
+git checkout feature-hazelcast
+git pull
+mvn install -DskipTests
+PADO_VERSION=$(grep "<pado.version>" pom.xml | sed -e 's/^.*<pado.version>//' -e 's/<\/pado.version>//')
+tar -C $APP_DIR -xzf pado-deployment/target/assembly/pado_${PADO_VERSION}.tar.gz 
+# Add Hazelcast path in pado's setenv.sh
+echo "CLASSPATH=\"\${CLASSPATH}:\${HAZELCAST_ADDON_WORKSPACE}/lib/*\"" >> $APP_DIR/pado_${PADO_VERSION}/bin_sh/hazelcast/setenv.sh
+popd > /dev/null
+
+# SED backup prefix
+if [[ ${OS_NAME} == DARWIN* ]]; then
+   # Mac - space required
+   __SED_BACKUP=" 0"
+else
+   __SED_BACKUP="0"
+fi
+
+if [ "$PADO_VERSION" != "" ]; then
+   OLD_PADO_VERSION=$(grep "PADO_VERSION=" setenv.sh)
+   if [ "$OLD_PADO_VERSION" != "" ]; then
+      sed -i${__SED_BACKUP} 's/PADO_VERSION=.*$/PADO_VERSION='${PADO_VERSION}'/' setenv.sh
+   else
+      echo "PADO_VERSION=${PADO_VERSION}" >> setenv.sh
+   fi
+fi
+
+# Set JAVA_HOME in pado's setenv.sh
+sed -i${__SED_BACKUP} -e 's/JAVA_HOME=.*$/JAVA_HOME=${JAVA_HOME}/g' $APP_DIR/pado_${PADO_VERSION}/bin_sh/setenv.sh
+
+# Copy gemfire.jar to the pado's lib directory. This is required due to GemFire dependency of JsonLite.
+cp $APP_DIR/build/pado/pado-tools/target/dependency/gemfire-8*.jar $APP_DIR/pado_${PADO_VERSION}/lib/
+
+# Remove the build files if the -clean option is specified.
+if [ "$CLEAN" == "true" ]; then
+   rm -rf $APP_DIR/build
+fi
+
+#
+# Build the app to download the JDBC drivers.
+#
+pushd $APP_DIR > /dev/null
+mvn install
+popd > /dev/null
+
+cp $APP_DIR/lib/* $HAZELCAST_ADDON_WORKSPACE/lib/
+
+# Remove the build files if the -clean option is specified.
+if [ "$CLEAN" == "true" ]; then
+   rm -rf $APP_DIR/lib
+fi
+
+#
+# Display build information
+#
+cat <<EOF
+
+Workspace: $HAZELCAST_ADDON_WORKSPACE
+
+Pado has been built and installed in the following directory.
+
+   $APP_DIR/pado_${PADO_VERSION}
+
+See ../README.md for running Hazelcast specifics supported by Pado.
+
+EOF
