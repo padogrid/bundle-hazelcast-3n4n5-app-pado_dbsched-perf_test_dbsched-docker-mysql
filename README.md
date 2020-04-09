@@ -47,7 +47,7 @@ cd_app perf_test_dbsched; cd bin_sh
 
 ## Configuring Hibernate
 
-The 'perf_test_dbsched' app has been preconfigured to connect to MySQL on localhost with the user name `root` and the password `MySql123`. You can change the user name and password in `etc/hibernate.cfg-mysql.xml`.
+The `perf_test_dbsched` app has been preconfigured to connect to MySQL on localhost with the user name `root` and the password `MySql123`. You can change the user name and password in `etc/hibernate.cfg-mysql.xml`.
 We will be using the `perf_test` app to load data directly into the database tables. After the database has been loaded with data, we will execute the use case by first dumping database tables to CSV files.
 
 ```console
