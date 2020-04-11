@@ -38,7 +38,7 @@ Open MySQL Workbench and create the `nw` schema. When you run the test_group scr
 
 ## Building `perf_test_dbsched`
 
-You need to download the MySQL binary files by building `perf_test_dbsched` as follows.
+We need to download the MySQL binary files by building `perf_test_dbsched` as follows.
 
 ```console
 cd_app perf_test_dbsched; cd bin_sh
@@ -51,6 +51,7 @@ The `perf_test_dbsched` app has been preconfigured to connect to MySQL on localh
 We will be using the `perf_test` app to load data directly into the database tables. After the database has been loaded with data, we will execute the use case by first dumping database tables to CSV files.
 
 ```console
+# Change database user name and password in the Hibernate config file.
 cd_app perf_test_dbsched
 vi etc/hibernate.cfg-mysql.xml
 ```
@@ -123,7 +124,7 @@ The `mysql.json` file contents are shown below.
 }
 ```
 
-Note that `serverTimezone` is set to `EST` for the JDBC URL. Without it, you may see the following exception if your MySQL uses the system timezone and unable to calculate the dates due to the leap year.
+:exclamation: Note that `serverTimezone` is set to `EST` for the JDBC URL. Without it, you may see the following exception if your MySQL uses the system timezone and unable to calculate the dates due to the leap year.
 
 ```console
 com.mysql.cj.exceptions.WrongArgumentException: HOUR_OF_DAY: 2 -> 3
@@ -156,17 +157,22 @@ switch_cluster dbsched
 vi etc/hazelcast.xml
 ```
 
-Change the `factory-id` value as needed.
+Change the `factory-id` value to a new value if you changed it.
 
 ```xml
-<portable-factory factory-id="20000">
-    org.hazelcast.data.demo.nw.PortableFactoryImpl
-</portable-factory>
+   <serialization>
+   ...
+      <portable-factory factory-id="20000">
+       org.hazelcast.data.demo.nw.PortableFactoryImpl
+      </portable-factory>
+   </serialization>
 ```
 
 7. Compile the generated code and deploy the generated jar file to the workspace `plugins` directory so that it will be included in the cluster class path.
 
 ```console
+cd_app pado_dbsched
+cd pado_<version>/bin_sh/hazelcast
 ./compile_generated_code
 cp ../../dropins/generated.jar $PADOGRID_WORKSPACE/plugins/
 ```
@@ -189,6 +195,13 @@ start_cluster
 cd_app pado_dbsched
 cd pado_<version>/bin_sh/hazelcast
 ./import_scheduler -import
+```
+
+Execute the following SQL statements on your database to verify the data.
+
+```sql
+select * from nw.customers;
+select * from nw.orders;
 ```
 
 10. Once you are satisfied with the results, you can schedule the job by executing the following.
