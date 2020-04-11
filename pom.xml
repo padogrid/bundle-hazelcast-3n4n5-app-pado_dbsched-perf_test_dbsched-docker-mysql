@@ -5,7 +5,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.hazelcast.addon</groupId>
+	<groupId>padogrid.addon</groupId>
 	<artifactId>hazelcast-3-cluster-app-dbsched-pado_dbsched-perf_test_dbsched</artifactId>
 	<packaging>pom</packaging>
 	<name>hazelcast-3-cluster-app-dbsched-pado_dbsched-perf_test_dbsched</name>

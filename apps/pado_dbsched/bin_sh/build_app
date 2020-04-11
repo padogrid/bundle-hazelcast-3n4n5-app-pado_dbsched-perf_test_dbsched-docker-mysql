@@ -41,7 +41,7 @@ mvn install -DskipTests
 PADO_VERSION=$(grep "<pado.version>" pom.xml | sed -e 's/^.*<pado.version>//' -e 's/<\/pado.version>//')
 tar -C $APP_DIR -xzf pado-deployment/target/assembly/pado_${PADO_VERSION}.tar.gz 
 # Add Hazelcast path in pado's setenv.sh
-echo "CLASSPATH=\"\${CLASSPATH}:\${HAZELCAST_ADDON_WORKSPACE}/lib/*\"" >> $APP_DIR/pado_${PADO_VERSION}/bin_sh/hazelcast/setenv.sh
+echo "CLASSPATH=\"\${CLASSPATH}:\${PADOGRID_WORKSPACE}/lib/*\"" >> $APP_DIR/pado_${PADO_VERSION}/bin_sh/hazelcast/setenv.sh
 popd > /dev/null
 
 # SED backup prefix
@@ -79,7 +79,7 @@ pushd $APP_DIR > /dev/null
 mvn install
 popd > /dev/null
 
-cp $APP_DIR/lib/* $HAZELCAST_ADDON_WORKSPACE/lib/
+cp $APP_DIR/lib/* $PADOGRID_WORKSPACE/lib/
 
 # Remove the build files if the -clean option is specified.
 if [ "$CLEAN" == "true" ]; then
@@ -91,7 +91,7 @@ fi
 #
 cat <<EOF
 
-Workspace: $HAZELCAST_ADDON_WORKSPACE
+Workspace: $PADOGRID_WORKSPACE
 
 Pado has been built and installed in the following directory.
 

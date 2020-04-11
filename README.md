@@ -168,7 +168,7 @@ Change the `factory-id` value as needed.
 
 ```console
 ./compile_generated_code
-cp ../../dropins/generated.jar $HAZELCAST_ADDON_WORKSPACE/plugins/
+cp ../../dropins/generated.jar $PADOGRID_WORKSPACE/plugins/
 ```
 
 8. Start cluster.
