@@ -94,8 +94,11 @@ IMPORTANT:
 		<portable-version>1</portable-version>
 		<portable-factories>
 			<portable-factory factory-id="10000">
-                org.hazelcast.addon.hql.impl.PortableFactoryImpl
-            </portable-factory>
+			org.hazelcast.addon.hql.impl.PortableFactoryImpl
+			</portable-factory>
+			<portable-factory factory-id="20000">
+			org.hazelcast.data.demo.nw.PortableFactoryImpl
+			</portable-factory>
 		</portable-factories>
 	</serialization>
 </hazelcast>
