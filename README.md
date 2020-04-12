@@ -213,5 +213,10 @@ select * from nw.orders;
 ## Tearing Down
 
 ```console
+# Stop the Hazelcast cluster
 stop_cluster
+
+# Run jps to find and kill the 'HazelcastImportScheduler' process
+jps
+kill -9 <pid>
 ```
