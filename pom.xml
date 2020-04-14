@@ -6,9 +6,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>padogrid.addon</groupId>
-	<artifactId>hazelcast-3-cluster-app-dbsched-pado_dbsched-perf_test_dbsched</artifactId>
+	<artifactId>bundle-hazelcast-3-app-pado_dbsched-perf_test_dbsched-cluster-dbsched</artifactId>
 	<packaging>pom</packaging>
-	<name>hazelcast-3-cluster-app-dbsched-pado_dbsched-perf_test_dbsched</name>
+        <name>${project.artifactId}</name>
 	<version>1.0.0</version>
 	<description>CSV file data ingestion with Pado ETL scheduler</description>
 
