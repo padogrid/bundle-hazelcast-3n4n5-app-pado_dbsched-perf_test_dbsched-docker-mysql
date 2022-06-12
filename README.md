@@ -4,6 +4,8 @@ The `dbsched` bundle is preconfigured with the Pado scheduler to periodically ex
 
 ## Installing Bundle
 
+![PadoGrid](https://github.com/padogrid/padogrid/raw/develop/images/padogrid-3d-16x16.png) [*Driven by PadoGrid*](https://github.com/padogrid)
+
 ```console
 install_bundle -download bundle-hazelcast-3-app-pado_dbsched-perf_test_dbsched-cluster-dbsched
 ```
