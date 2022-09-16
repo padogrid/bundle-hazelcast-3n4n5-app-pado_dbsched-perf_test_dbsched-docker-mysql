@@ -27,6 +27,8 @@ workspace.code-workspace
 /.addonenv.sh
 /initenv.sh
 /setenv.sh
+/vmenv.sh
+/vmenv.sh
 bundles
 lib
 plugins
