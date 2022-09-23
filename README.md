@@ -9,7 +9,7 @@ The `dbsched` bundle is preconfigured with the Pado scheduler to periodically ex
 ## Installing Bundle
 
 ```console
-install_bundle -download bundle-hazelcast-3n4n5-app-pado_dbsched-perf_test_dbsched-cluster-dbsched
+install_bundle -download  bundle-hazelcast-3n4n5-app-pado_dbsched-perf_test_dbsched-docker-mysql
 ```
 
 ## Use Case
