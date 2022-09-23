@@ -1,8 +1,8 @@
 {
         "Driver": "com.mysql.cj.jdbc.Driver",
-        "Url": "jdbc:mysql://localhost:3306/nw?allowPublicKeyRetrieval=true&serverTimezone=EST",
+        "Url": "jdbc:mysql://localhost:3306/nw?allowPublicKeyRetrieval=true&serverTimezone=America/New_York",
         "User": "root",
-        "Password": "yMgF43JvHM0fWSHDCA1GmQ==",
+        "Password": "",
         "Delimiter": ",",
         "Null": "'\\N'",
         "GridId": "dbsched",

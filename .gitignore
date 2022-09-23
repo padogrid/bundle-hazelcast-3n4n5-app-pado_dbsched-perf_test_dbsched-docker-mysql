@@ -60,3 +60,4 @@ results
 pom.xml0
 build
 docker/mysql/data
+apps/pado_dbsched/pado_*

@@ -19,7 +19,7 @@
 #JAVA_OPTS=$JAVA_OPTS
 
 # Pado version - set by build_app
-PADO_VERSION=${PADO_VERSION}
+PADO_VERSION=0.5.0-B1-SNAPSHOT
 
 # Pado Home
 PADO_HOME=$APP_DIR/pado_${PADO_VERSION}

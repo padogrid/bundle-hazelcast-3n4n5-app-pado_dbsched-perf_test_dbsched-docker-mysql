@@ -9,7 +9,7 @@ The `dbsched` bundle is preconfigured with the Pado scheduler to periodically ex
 ## Installing Bundle
 
 ```console
-install_bundle -download bundle-hazelcast-3n4n5-app-pado_dbsched-perf_test_dbsched-cluster-dbsched
+install_bundle -download  bundle-hazelcast-3n4n5-app-pado_dbsched-perf_test_dbsched-docker-mysql
 ```
 
 ## Use Case
@@ -128,12 +128,14 @@ cd pado_<version>/data/scehduler/etc
 vi mysql.json
 ```
 
-The `mysql.json` file contents are shown below.
+The `mysql.json` file contents are shown below. It configures the Pado scheduler to import the `nw.customers` table once a day at midnight and the `nw.orders` table every hour.
+
+Note that the `GridId` attribute must be set to the Hazelcast cluster name. In our case, it is set to `dbsched`. 
 
 ```json
 {
         "Driver": "com.mysql.cj.jdbc.Driver",
-        "Url": "jdbc:mysql://localhost:3306/nw?allowPublicKeyRetrieval=true&serverTimezone=EST",
+        "Url": "jdbc:mysql://localhost:3306/nw?allowPublicKeyRetrieval=true&serverTimezone=America/New_York",
         "User": "root",
         "Password": "",
         "Delimiter": ",",
@@ -156,7 +158,7 @@ The `mysql.json` file contents are shown below.
 }
 ```
 
-:exclamation: Note that `serverTimezone` is set to `EST` for the JDBC URL. Without it, you may see the following exception if your MySQL uses the system timezone and unable to calculate the dates due to the leap year.
+:exclamation: Note that `serverTimezone` is set to `America/New_York` for the JDBC URL. Without it, you may see the following exception if your MySQL uses the system timezone and unable to calculate the dates due to the leap year.
 
 ```console
 com.mysql.cj.exceptions.WrongArgumentException: HOUR_OF_DAY: 2 -> 3
@@ -182,14 +184,22 @@ cd pado_<version>/bin_sh/hazelcast
 ./generate_versioned_portable -schemaDir data/scheduler/schema -fid 20000 -cid 20000
 ```
 
-The factory class with the ID 20000 has already been configured in the Hazelcast member configuration file, `hazelcast.xml`, as shown below. If you specified the `-fid` value other than 20000 then you must also change the value in the file.
+7. Add the generated factory class information in the cluster's configuration file.
 
-```console
+Let's create a new Hazelcast cluster. Make sure to name the cluster `dbsched`. We have configured the scheduler with the `dbsched` cluster in Step 3.
+
+```bash
+make_cluster -product hazelcast -cluster dbsched
+```
+
+Add the factory class information in the configuration file.
+
+```bash
 switch_cluster dbsched
 vi etc/hazelcast.xml
 ```
 
-Change the `factory-id` value to a new value if you changed it.
+`etc/hazelcast.xml` File:
 
 ```xml
    <serialization>
@@ -200,7 +210,7 @@ Change the `factory-id` value to a new value if you changed it.
    </serialization>
 ```
 
-7. Compile the generated code and deploy the generated jar file to the workspace `plugins` directory so that it will be included in the cluster class path.
+8. Compile the generated code and deploy the generated jar file to the workspace `plugins` directory so that it will be included in the cluster class path.
 
 ```console
 cd_app pado_dbsched
@@ -209,7 +219,7 @@ cd pado_<version>/bin_sh/hazelcast
 cp ../../dropins/generated.jar $PADOGRID_WORKSPACE/plugins/
 ```
 
-8. Start cluster.
+9. Start cluster.
 
 ```console
 switch_cluster dbsched
@@ -221,7 +231,7 @@ add_member; add_member
 start_cluster
 ```
 
-9. Import the downloaded data into the cluster.
+10. Import the downloaded data into the cluster.
 
 ```console
 cd_app pado_dbsched
@@ -229,14 +239,14 @@ cd pado_<version>/bin_sh/hazelcast
 ./import_scheduler -import
 ```
 
-Execute the following SQL statements on your database to verify the data.
+Execute the following SQL statements in your database to verify the data.
 
 ```sql
 select * from nw.customers;
 select * from nw.orders;
 ```
 
-10. Once you are satisfied with the results, you can schedule the job by executing the following.
+11. Once you are satisfied with the results, you can schedule the job by executing the following.
 
 ```console
 ./import_scheduler -sched
