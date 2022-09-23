@@ -9,7 +9,7 @@ The `dbsched` bundle is preconfigured with the Pado scheduler to periodically ex
 ## Installing Bundle
 
 ```console
-install_bundle -download bundle-hazelcast-3-app-pado_dbsched-perf_test_dbsched-cluster-dbsched
+install_bundle -download bundle-hazelcast-3n4n5-app-pado_dbsched-perf_test_dbsched-cluster-dbsched
 ```
 
 ## Use Case
@@ -22,7 +22,7 @@ In this use case, to control the system load, the IT department has put restrict
 4. Ingest the transformed data into Hazelcast
 5. Automate and schedule jobs to periodically repeat the above steps
 
-![DB Sched Screenshot](/images/db-sched.png)
+![DB Sched Screenshot](images/db-sched.png)
 
 ## Job Scheduler and ETL
 
@@ -40,6 +40,34 @@ We could also use the popular schedulers like Spring Cloud Data Flow and Apache 
 
 Open MySQL Workbench and create the `nw` schema. When you run the test_group script (see below), the `customers` and `orders` tables will automatically be created by Hibernate.
 
+### MySQL Docker Container
+
+If you prefer to use Docker to start MySQL, start the MySQL container as follows.
+
+```bash
+cd_docker mysql
+docker-compose up
+```
+
+MySQL root account is setup as follows:
+
+| Parameter      | Value                 |
+| -------------- | --------------------- |
+| Adminer URL    | http://localhost:8080 |
+| MySQL User     | root                  |
+| MySQL Password | rootpw                |
+| MySQL Port     | 3306                  |
+
+Create the `nw` database using Adminer.
+
+- Login to MySQL from Adminer URL 
+- Select **SQL command** from Adminer
+- Execute the following:
+
+```sql
+create database nw; 
+```
+
 ## Building `perf_test_dbsched`
 
 We need to download the MySQL binary files by building `perf_test_dbsched` as follows.
@@ -51,7 +79,7 @@ cd_app perf_test_dbsched; cd bin_sh
 
 ## Configuring Hibernate
 
-The `perf_test_dbsched` app has been preconfigured to connect to MySQL on localhost with the user name `root` and the password `MySql123`. You can change the user name and password in `etc/hibernate.cfg-mysql.xml`.
+The `perf_test_dbsched` app has been preconfigured to connect to MySQL on localhost with the user name `root` and the password `rootpw`. You can change the user name and password in `etc/hibernate.cfg-mysql.xml`.
 We will be using the `perf_test` app to load data directly into the database tables. After the database has been loaded with data, we will execute the use case by first dumping database tables to CSV files.
 
 ```console
@@ -107,7 +135,7 @@ The `mysql.json` file contents are shown below.
         "Driver": "com.mysql.cj.jdbc.Driver",
         "Url": "jdbc:mysql://localhost:3306/nw?allowPublicKeyRetrieval=true&serverTimezone=EST",
         "User": "root",
-        "Password": "yMgF43JvHM0fWSHDCA1GmQ==",
+        "Password": "",
         "Delimiter": ",",
         "Null": "'\\N'",
         "GridId": "dbsched",

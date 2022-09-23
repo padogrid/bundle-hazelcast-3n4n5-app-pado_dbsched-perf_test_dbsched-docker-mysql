@@ -35,9 +35,9 @@ plugins
 .ipynb_checkpoints
 
 # PadoGrid workspace directories
-apps
+#apps
 clusters
-docker
+#docker
 k8s
 pods
 .workspace
@@ -59,3 +59,4 @@ results
 *.sh0
 pom.xml0
 build
+docker/mysql/data
