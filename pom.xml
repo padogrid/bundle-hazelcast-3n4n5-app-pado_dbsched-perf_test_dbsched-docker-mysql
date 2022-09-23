@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>padogrid.addon</groupId>
-	<artifactId>bundle-hazelcast-3-app-pado_dbsched-perf_test_dbsched-cluster-dbsched</artifactId>
+	<artifactId>bundle-hazelcast-3n4n5-app-pado_dbsched-perf_test_dbsched-docker-mysql</artifactId>
 	<packaging>pom</packaging>
         <name>${project.artifactId}</name>
 	<version>1.0.0</version>
