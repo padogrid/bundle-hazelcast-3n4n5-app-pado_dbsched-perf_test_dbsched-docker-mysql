@@ -192,7 +192,7 @@ cd pado_<version>/bin_sh/hazelcast
 Let's create a new Hazelcast cluster. Make sure to name the cluster `dbsched`. We have configured the scheduler with the `dbsched` cluster in Step 3.
 
 ```bash
-make_cluster -product hazelcast -cluster dbsched
+create_cluster -product hazelcast -cluster dbsched
 ```
 
 Add the factory class information in the configuration file.
