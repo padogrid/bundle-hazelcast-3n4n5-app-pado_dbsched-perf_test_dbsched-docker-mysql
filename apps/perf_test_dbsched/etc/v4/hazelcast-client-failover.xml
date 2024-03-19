@@ -40,8 +40,8 @@
         Each client configuration can be listed via <client> element nested into the <clients> element.
     -->
     <clients>
-        <client>${hazelcast-addon.blue}</client>
-        <client>${hazelcast-addon.green}</client>
+        <client>${padogrid.blue}</client>
+        <client>${padogrid.green}</client>
     </clients>
 
     <!--

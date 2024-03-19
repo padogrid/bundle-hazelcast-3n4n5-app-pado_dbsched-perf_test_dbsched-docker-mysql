@@ -7,12 +7,13 @@
 	under the License is distributed on an "AS IS" BASIS, ~ WITHOUT WARRANTIES 
 	OR CONDITIONS OF ANY KIND, either express or implied. ~ See the License for 
 	the specific language governing permissions and ~ limitations under the License. -->
-<hazelcast-client
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.hazelcast.com/schema/client-config
-                               http://www.hazelcast.com/schema/client-config/hazelcast-client-config-3.12.xsd"
-	xmlns="http://www.hazelcast.com/schema/client-config">
+<hazelcast-client xmlns="http://www.hazelcast.com/schema/client-config"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://www.hazelcast.com/schema/client-config
+                  http://www.hazelcast.com/schema/client-config/hazelcast-client-config-5.0.xsd">
 
+	<cluster-name>dev</cluster-name>
+	<instance-name>PadoGrid-perf_test</instance-name>
 	<network>
 		<cluster-members>
 			<address>localhost:5721</address>
@@ -36,7 +37,7 @@
 	</serialization>
 
 	<!-- Security settings using SimpleCredentialsFactory which is part of the 
-		hazelcast-addon distribution. -->
+		padogrid distribution. -->
 	<!--
 	<security>
 		<credentials-factory

@@ -13,6 +13,8 @@
                                http://www.hazelcast.com/schema/client-config/hazelcast-client-config-4.0.xsd"
 	xmlns="http://www.hazelcast.com/schema/client-config">
 
+	<cluster-name>dev</cluster-name>
+	<instance-name>PadoGrid-perf_test</instance-name>
 	<network>
 		<cluster-members>
 			<address>localhost:5741</address>
@@ -36,7 +38,7 @@
 	</serialization>
 
 	<!-- Security settings using SimpleCredentialsFactory which is part of the 
-		hazelcast-addon distribution. -->
+		padogrid distribution. -->
 	<!--
 	<security>
 		<credentials-factory

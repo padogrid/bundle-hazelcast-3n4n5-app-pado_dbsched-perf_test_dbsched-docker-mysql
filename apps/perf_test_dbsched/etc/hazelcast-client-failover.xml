@@ -32,7 +32,7 @@
 <hazelcast-client-failover xmlns="http://www.hazelcast.com/schema/client-config"
                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                            xsi:schemaLocation="http://www.hazelcast.com/schema/client-config
-                           http://www.hazelcast.com/schema/client-config/hazelcast-client-failover-config-3.12.xsd">
+                           http://www.hazelcast.com/schema/client-config/hazelcast-client-failover-config-5.0.xsd">
 
     <!--
         The Hazelcast client can configurations that the client is using to connect to a Hazelcast cluster in the case
@@ -40,8 +40,8 @@
         Each client configuration can be listed via <client> element nested into the <clients> element.
     -->
     <clients>
-        <client>${hazelcast-addon.blue}</client>
-        <client>${hazelcast-addon.green}</client>
+        <client>${padogrid.blue}</client>
+        <client>${padogrid.green}</client>
     </clients>
 
     <!--

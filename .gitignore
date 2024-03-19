@@ -57,7 +57,7 @@ run
 results
 *.drawio.bkp
 *.sh0
-pom.xml0
+*.xml0
 build
 docker/mysql/data
 apps/pado_dbsched/pado_*

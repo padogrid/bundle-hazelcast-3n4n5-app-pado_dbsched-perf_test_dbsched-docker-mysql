@@ -3,7 +3,7 @@
 ---
 
 <!-- Platforms -->
-[![Host OS](https://github.com/padogrid/padogrid/wiki/images/padogrid-host-os.drawio.svg)](https://github.com/padogrid/padogrid/wiki/Platform-Host-OS) [![VM](https://github.com/padogrid/padogrid/wiki/images/padogrid-vm.drawio.svg)](https://github.com/padogrid/padogrid/wiki/Platform-VM) [![Docker](https://github.com/padogrid/padogrid/wiki/images/padogrid-docker.drawio.svg)](https://github.com/padogrid/padogrid/wiki/Platform-Docker) [![Kubernetes](https://github.com/padogrid/padogrid/wiki/images/padogrid-kubernetes.drawio.svg)](https://github.com/padogrid/padogrid/wiki/Platform-Kubernetes)
+[![PadoGrid 1.x](https://github.com/padogrid/padogrid/wiki/images/padogrid-padogrid-1.x.drawio.svg)](https://github.com/padogrid/padogrid/wiki/Platform-PadoGrid-1.x) [![Host OS](https://github.com/padogrid/padogrid/wiki/images/padogrid-host-os.drawio.svg)](https://github.com/padogrid/padogrid/wiki/Platform-Host-OS) [![VM](https://github.com/padogrid/padogrid/wiki/images/padogrid-vm.drawio.svg)](https://github.com/padogrid/padogrid/wiki/Platform-VM) [![Docker](https://github.com/padogrid/padogrid/wiki/images/padogrid-docker.drawio.svg)](https://github.com/padogrid/padogrid/wiki/Platform-Docker) [![Kubernetes](https://github.com/padogrid/padogrid/wiki/images/padogrid-kubernetes.drawio.svg)](https://github.com/padogrid/padogrid/wiki/Platform-Kubernetes)
 
 # Bundle: dbsched
 
@@ -27,6 +27,29 @@ In this use case, to control the system load, the IT department has put restrict
 
 ![DB Sched Screenshot](images/db-sched.png)
 
+## Bundle Contents
+
+```console
+apps
+├── pado_dbsched
+└── perf_test_dbsched
+
+docker
+└── mysql
+```
+
+## Hazelcast Cluster
+
+Let's create a new Hazelcast cluster. Make sure to name the cluster `dbsched`. The scheduler has been preconfigured with the `dbsched` cluster. See Step 3 in [Configuring and Running Pado Scheduler](#configuring-and-running-pado-scheduler).
+
+```bash
+# Create dbsched
+create_cluster -product hazelcast -cluster dbsched
+
+# Switch to the dbsched cluster so that we are in the Hazelcast cluster context
+switch_cluster dbsched
+```
+
 ## Job Scheduler and ETL
 
 This bundle includes the Pado scheduler to simplify the ETL process. The Pado scheduler offers the following:
@@ -49,7 +72,7 @@ If you prefer to use Docker to start MySQL, start the MySQL container as follows
 
 ```bash
 cd_docker mysql
-docker-compose up
+docker compose up -d
 ```
 
 MySQL root account is setup as follows:
@@ -76,7 +99,7 @@ create database nw;
 We need to download the MySQL binary files by building `perf_test_dbsched` as follows.
 
 ```console
-cd_app perf_test_dbsched; cd bin_sh
+cd_app perf_test_dbsched/bin_sh
 ./build_app
 ```
 
@@ -96,14 +119,14 @@ vi etc/hibernate.cfg-mysql.xml
 Let's load mock data into the `nw.customers` and `nw.oders` tables by executing the `test_group -db` command. The `-db` option directly loads data into the database instead of Hazelcast.
 
 ```console
-cd_app perf_test_dbsched; cd bin_sh
+cd_app perf_test_dbsched/bin_sh
 ./test_group -db -run -prop ../etc/group-factory.properties
 ```
 
 ## Building Pado App
 
 ```console
-cd_app pado_dbsched; cd bin_sh
+cd_app pado_dbsched/bin_sh
 ./build_app
 ```
 
@@ -161,7 +184,7 @@ Note that the `GridId` attribute must be set to the Hazelcast cluster name. In o
 }
 ```
 
-:exclamation: Note that `serverTimezone` is set to `America/New_York` for the JDBC URL. Without it, you may see the following exception if your MySQL uses the system timezone and unable to calculate the dates due to the leap year.
+❗️ Note that `serverTimezone` is set to `America/New_York` for the JDBC URL. Without it, you may see the following exception if your MySQL uses the system timezone and unable to calculate the dates due to the leap year.
 
 ```console
 com.mysql.cj.exceptions.WrongArgumentException: HOUR_OF_DAY: 2 -> 3
@@ -189,20 +212,12 @@ cd pado_<version>/bin_sh/hazelcast
 
 7. Add the generated factory class information in the cluster's configuration file.
 
-Let's create a new Hazelcast cluster. Make sure to name the cluster `dbsched`. We have configured the scheduler with the `dbsched` cluster in Step 3.
-
-```bash
-create_cluster -product hazelcast -cluster dbsched
-```
-
-Add the factory class information in the configuration file.
-
 ```bash
 switch_cluster dbsched
 vi etc/hazelcast.xml
 ```
 
-`etc/hazelcast.xml` File:
+Add the following towards the bottom of the `etc/hazelcast.xml` file:
 
 ```xml
    <serialization>
@@ -222,14 +237,9 @@ cd pado_<version>/bin_sh/hazelcast
 cp ../../dropins/generated.jar $PADOGRID_WORKSPACE/plugins/
 ```
 
-9. Start cluster.
+9. Start Hazelcast cluster.
 
 ```console
-switch_cluster dbsched
-
-# First add two (2) members
-add_member; add_member
-
 # Stat cluster
 start_cluster
 ```
@@ -242,18 +252,62 @@ cd pado_<version>/bin_sh/hazelcast
 ./import_scheduler -import
 ```
 
-Execute the following SQL statements in your database to verify the data.
+11. Execute the `read_cache` command to verify the data in the Hazelcast cluster.
+
+```bash
+cd_app perf_test_dbsched
+./read_cache nw/customers
+./read_cache nw/orders
+```
+
+12. Execute the following SQL statements in your database to verify the data.
 
 ```sql
 select * from nw.customers;
 select * from nw.orders;
 ```
 
-11. Once you are satisfied with the results, you can schedule the job by executing the following.
+13. Once you are satisfied with the results, you can schedule the job by executing the following.
 
 ```console
+cd_app pado_dbsched
+cd pado_<version>/bin_sh/hazelcast
 ./import_scheduler -sched
 ```
+
+Output:
+
+```console
+./import_scheduler started. Please see the following log files for status:
+   /Users/dpark/Padogrid/workspaces/rwe-bundles/bundle-hazelcast-3n4n5-app-pado_dbsched-perf_test_dbsched-docker-mysql/apps/pado_dbsched/pado_0.5.0-B1-SNAPSHOT/log/./import_scheduler.log
+```
+
+14. Check the scheduler's log file to verify the scheduled jobs.
+
+```bash
+ cat  /Users/dpark/Padogrid/workspaces/rwe-bundles/bundle-hazelcast-3n4n5-app-pado_dbsched-perf_test_dbsched-docker-mysql/apps/pado_dbsched/pado_0.5.0-B1-SNAPSHOT/log/./import_scheduler.log
+```
+
+Output:
+
+```console
+[info 2024/03/19 11:41:12.809 EDT <main main> tid=1] ImportScheduler started. All import results are logged in this file.
+isSched=true
+isNow=false
+isImport=false
+[config 2024/03/19 11:41:13.079 EDT <main main> tid=1] com.netcrest.pado.tools.db.DbManager.logScheduledList(DbManager.java:394): DB import tasks scheduled:
+1. SUNDAY 00:00:00 dbsched//nw/customers [select * from nw.customers]
+2. SUNDAY 00:00:00 dbsched//nw/orders [select * from nw.orders]
+3. SUNDAY 01:00:00 dbsched//nw/orders [select * from nw.orders]
+4. SUNDAY 02:00:00 dbsched//nw/orders [select * from nw.orders]
+...
+174. SATURDAY 22:00:00 dbsched//nw/orders [select * from nw.orders]
+175. SATURDAY 23:00:00 dbsched//nw/orders [select * from nw.orders]
+```
+
+As you can see from the above log output, the `nw.customers` table is scheduled to be imported to the `nw/customers` map every Sunday at 00:00:00. The `nw.orders` table, on the other hand, is secheduled to be imported to the `nw/orders` map every hour.
+
+15. Try updating the database to see if the updates get imported into Hazelcast. Keep in mind that you will need to wait up to an hour before the updates make to Hazelcast.
 
 ## Tearing Down
 
@@ -262,8 +316,7 @@ select * from nw.orders;
 stop_cluster
 
 # Run jps to find and kill the 'HazelcastImportScheduler' process
-jps
-kill -9 <pid>
+jps |grep HazelcastImportScheduler | kill -9 $(awk '{print $1}')
 ```
 
 ---
