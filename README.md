@@ -11,6 +11,8 @@ The `dbsched` bundle is preconfigured with the Pado scheduler to periodically ex
 
 ## Installing Bundle
 
+✏️  *Please see [Installing Bundles](https://github.com/padogrid/padogrid/wiki/Installing-Bundles) for instructions on how to install bundles and their required software.*
+
 ```console
 install_bundle -download  bundle-hazelcast-3n4n5-app-pado_dbsched-perf_test_dbsched-docker-mysql
 ```
